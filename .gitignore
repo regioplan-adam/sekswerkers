@@ -1,0 +1,11 @@
+# visual studiocode
+.vscode
+
+# virutal environment
+swvenv
+
+# temp files
+output
+
+# cache
+__pycache__

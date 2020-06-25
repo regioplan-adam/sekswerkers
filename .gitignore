@@ -1,11 +1,11 @@
 # visual studiocode
-.vscode
+.vscode/
 
 # virutal environment
-swvenv
+venv/
 
 # temp files
-output
+output/
 
 # cache
 __pycache__

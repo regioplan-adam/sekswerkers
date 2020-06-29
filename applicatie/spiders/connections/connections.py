@@ -11,7 +11,7 @@ def dbConnect():
         PORT=1433;
         DATABASE=regioplan-database;
         UID=dbadmin;
-        PWD=Hetu1793!'''
+        PWD='''
         )
 
     return cnxn

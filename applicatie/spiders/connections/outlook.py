@@ -37,7 +37,7 @@ def sendEmail(
         server.ehlo()
         server.starttls()
         server.ehlo()
-        server.login('anne.leemans@regioplan.nl', 'Henk2200quid!')  ### if applicable
+        server.login('anne.leemans@regioplan.nl', '')  ### if applicable
         server.send_message(msg)
         server.quit()
         print('Email send to: '+receivers)

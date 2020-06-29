@@ -80,4 +80,3 @@ def loadAdvertisements():
         print(colored('Please contact system admin...............','red'))
     
     return output_df
-    

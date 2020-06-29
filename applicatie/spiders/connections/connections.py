@@ -80,4 +80,4 @@ def insertVariblesIntoTable(dwh_table,pandas_df,primary_key=''):
         print(colored(error,'red'))
         print(colored('Please contact system admin...............','red'))
 
-
+   

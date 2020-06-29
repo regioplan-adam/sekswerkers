@@ -1,5 +1,4 @@
 # visual studiocode
-.vscode/
 
 # virutal environment
 venv/
@@ -9,3 +8,4 @@ output/
 
 # cache
 __pycache__
+.python_packages

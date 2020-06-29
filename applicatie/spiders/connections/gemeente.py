@@ -1,5 +1,5 @@
-from spiders.connections import connections
-from spiders.connections import odata
+from __app__.applicatie.spiders.connections import connections
+from __app__.applicatie.spiders.connections  import odata
 import numpy as np
 import re
 # gemeente codes en namen toevoegen

@@ -6,13 +6,15 @@ import re
 import pandas as pd
 import datetime
 import time
+from tqdm import tqdm
+from termcolor import colored
 
 # laad urls
 def loadUrls():
     # set base website for scraper
     base_url = 'https://topescortbabes.com'
     urls = []
-    url = ['/netherlands/escorts?page=40']
+    url = ['/netherlands/escorts?page=2']
     while url != 'end':
         html = requests.get(base_url+url[-1])
         resp = lxml.html.fromstring(html.content)
@@ -22,7 +24,7 @@ def loadUrls():
         # do something
         # get next page    
         new_url = resp.xpath('//*[@id="homepage_right"]/div[*]/a/@href')
-        print('urls from page '+re.findall(r'[0-9]{1,3}',url[-1])[0]+' imported')
+        
         # check for end of the line
         url = 'end' if re.findall(r'[0-9]{1,3}',url[-1])[0] > re.findall(r'[0-9]{1,3}',new_url[-1])[0] else new_url
 
@@ -35,15 +37,18 @@ def loadUrls():
 def loadAdvertisements():
     # set start time for scraper
     start = time.time()
-    print('Scraper for topescortbabes.com strated at '+str(datetime.datetime.now().hour)+':'+
+    print(colored('Scraper for topescortbabes.com strated at '+str(datetime.datetime.now().hour)+':'+
         str(datetime.datetime.now().minute)+' on '+str(datetime.datetime.now().day)+'/'+
-        str(datetime.datetime.now().month))
+        str(datetime.datetime.now().month),'green'))
+    print(colored('\nPlease wait while system is Loading urls...\n','yellow'))
+    
     try:
         output_df = pd.DataFrame()
         urls = loadUrls()
+        
         index = 0
 
-        for url in urls:
+        for url in tqdm(urls):
             temp_df = pd.DataFrame(index=[index])
             html = requests.get(url)
             resp = lxml.html.fromstring(html.content)
@@ -61,27 +66,27 @@ def loadAdvertisements():
             temp_df['prijzen'] =  ' ;'.join(resp.xpath('//div[contains(@class,"price-item")]//text()'))
             temp_df['mogelijkheden'] = 'null'
             temp_df['werk_tijden_bulk'] = ';'.join(resp.xpath("//ul[contains(@class,'available-wrapper')]//text()"))
-            temp_df['alt_tag'] = ';'.join(resp.xpath('//a[contains(@href, ".jpg")]/@href'))
             temp_df['scr_tag'] = ';'.join(resp.xpath('//a[contains(@href, ".jpg")]/@href'))
             temp_df['url'] =  url
             output_df = output_df.append(temp_df)
             index += 1
-            print('page '+str(index)+' from '+str(len(urls))+' loaded!')
 
         # aanbieder
         output_df['aanbieder'] = 'topescortbabes.com'
 
         # end time 
         end = time.time()
-        print('Scraper for topescortbabes.com has successfully finnished with '+ str(len(output_df)) + ' records found\n'
-        'Total elapesed time is: '+str(round((end - start)/60,2)), 'minutes!')
+        print(colored('\nScraper for topescortbabes.com has successfully finnished with '+ str(len(output_df)) + ' records found\n'
+        'Total elapesed time is: '+str(round((end - start)/60,2))+'minutes!','green'))
+        print(colored('---------------------------------------------------------------------\n\n','green'))
     
     # if error occurs reccord error and print in console 
     except Exception as e:
         end = time.time()
-        print('Spider for topescortbabes.com has failed with the following error:')
-        print(e)
-        print('Total elapesed time is: '+str(round((end - start)/60,2)), 'minutes!')
+        print(colored('WARNING!!! WARNING!!!','red'))
+        print(colored('Spider for topescortbabes.com has failed:', 'red'))
+        print(colored(e,'red'))
+        print(colored('Please contact system admin...............','red'))
     
     return output_df
     

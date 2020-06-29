@@ -2,15 +2,16 @@ import pypyodbc
 import pandas as pd
 import re
 import math
+from termcolor import colored
 
 def dbConnect():
     cnxn = pypyodbc.connect(
         '''DRIVER={ODBC Driver 17 for SQL Server};
-        SERVER=regioplantestserver.database.windows.net;
+        SERVER=regioplan-server.database.windows.net;
         PORT=1433;
-        DATABASE=regioplantestdb;
-        UID=regioadmin;
-        PWD=Henk2200quid!'''
+        DATABASE=regioplan-database;
+        UID=dbadmin;
+        PWD=Hetu1793!'''
         )
 
     return cnxn
@@ -51,25 +52,32 @@ def insertVariblesIntoTable(dwh_table,pandas_df,primary_key=''):
         cols = re.sub(r"'", "", cols)
         # connect to the data ware house 
         conn = dbConnect()
-        cursor = conn.dbConnect()
+        cursor =  conn.cursor()
 
         # sql sever allows max 1000 rows input
         lim = 1000
         runs = int(math.ceil(len(pandas_df) / lim))
-        for x in range(0,runs):
+        for x in range(runs):
             # push into the dwh
             dfrecordstuple = str([tuple(x) for x in pandas_df[lim*x:lim+(lim*x)].to_numpy()])
             dfrecordstuple = re.sub(r'[\[\]]', '', dfrecordstuple)
-            cursor.execute('SET IDENTITY_INSERT '+dwh_table+'OFF\nINSERT INTO '+ \
+            cursor.execute('SET IDENTITY_INSERT '+dwh_table+' OFF\nINSERT INTO '+ \
                 dwh_table + ' ' + cols + ' VALUES ' + dfrecordstuple)                                
             conn.commit()
-            print(str(x+1)+'/'+str(runs)+' uploaded!')
-        
+            if x+1 != runs:
+                print(colored(str((x+1)*lim)+' of '+str(len(pandas_df))+' rows uploaded!','yellow'))
+            else:
+                print(colored(str(len(pandas_df))+' of '+str(len(pandas_df))+' rows uploaded!','yellow'))
+
         cursor.close()
         conn.close()
 
-        print('Records inserted successfully into dwh-table: '+dwh_table)
+        print(colored('Records inserted successfully into dwh-table: '+dwh_table,'green'))
         
     except Exception as error:
-        print("Failed to insert into sql serer with the followig error:\n")    
-        print(error)
+        print(colored('WARNING!!! WARNING!!!','red'))
+        print(colored('Failed to insert into sql serer with the followig error:','red'))
+        print(colored(error,'red'))
+        print(colored('Please contact system admin...............','red'))
+
+
